@@ -1,0 +1,77 @@
+services:
+  books-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${BOOKS_DB}
+      POSTGRES_USER: ${BOOKS_USER}
+      POSTGRES_PASSWORD: ${BOOKS_PASSWORD}
+    volumes:
+      - books_pgdata:/var/lib/postgresql/data
+    networks:
+      - biblioteca-net
+
+  books_service:
+    build: ./books_service
+    environment:
+      DATABASE_URL: postgresql://${BOOKS_USER}:${BOOKS_PASSWORD}@books-db:5432/${BOOKS_DB}
+    ports:
+      - "8001:8000"
+    depends_on:
+      - books-db
+    networks:
+      - biblioteca-net
+  users-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${USERS_DB}
+      POSTGRES_USER: ${USERS_USER}
+      POSTGRES_PASSWORD: ${USERS_PASSWORD}
+    volumes:
+      - users_pgdata:/var/lib/postgresql/data
+    networks:
+      - biblioteca-net
+
+  users_service:
+    build: ./users_service
+    environment:
+      DATABASE_URL: postgresql://${USERS_USER}:${USERS_PASSWORD}@users-db:5432/${USERS_DB}
+    ports:
+      - "8002:8000"
+    depends_on:
+      - users-db
+    networks:
+      - biblioteca-net
+
+  orders-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${ORDERS_DB}
+      POSTGRES_USER: ${ORDERS_USER}
+      POSTGRES_PASSWORD: ${ORDERS_PASSWORD}
+    volumes:
+      - orders_pgdata:/var/lib/postgresql/data
+    networks:
+      - biblioteca-net
+
+  orders_service:
+    build: ./orders_service
+    environment:
+      DATABASE_URL: postgresql://${ORDERS_USER}:${ORDERS_PASSWORD}@orders-db:5432/${ORDERS_DB}
+      USERS_SERVICE_URL: http://users_service:8000
+      BOOKS_SERVICE_URL: http://books_service:8000
+    ports:
+      - "8003:8000"
+    depends_on:
+      - orders-db
+      - users_service
+      - books_service
+    networks:
+      - biblioteca-net
+
+networks:
+  biblioteca-net:
+
+volumes:
+  books_pgdata:
+  users_pgdata:
+  orders_pgdata:

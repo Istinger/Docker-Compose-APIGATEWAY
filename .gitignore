@@ -1,0 +1,32 @@
+# ----- Secretos y entorno -----
+.env
+.env.*
+!.env.example
+secrets/
+
+# ----- Python -----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.Python
+venv/
+.venv/
+env/
+
+# ----- Caché de herramientas -----
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ----- IDE / Editor -----
+.vscode/
+.idea/
+*.swp
+
+# ----- Sistema operativo -----
+.DS_Store
+Thumbs.db
+
+# ----- Logs -----
+*.log
